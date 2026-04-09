@@ -90,13 +90,17 @@ class GigRepository(private val context: Context) {
         vehicleFile().delete()
     }
 
-    fun loadVehicle(): Vehicle {
+    fun loadVehicles(): List<Vehicle> {
         val f = vehicleFile()
-        if (!f.exists()) return Vehicle()
-        return json.decodeFromString(f.readText())
+        if (!f.exists()) return listOf(Vehicle())
+        return try {
+            json.decodeFromString<List<Vehicle>>(f.readText())
+        } catch (e: Exception) {
+            listOf(json.decodeFromString<Vehicle>(f.readText()))
+        }
     }
 
-    fun saveVehicle(vehicle: Vehicle) {
-        vehicleFile().writeText(json.encodeToString(vehicle))
+    fun saveVehicles(vehicles: List<Vehicle>) {
+        vehicleFile().writeText(json.encodeToString(vehicles))
     }
 }

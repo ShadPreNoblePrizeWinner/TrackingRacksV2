@@ -25,8 +25,6 @@ data class GigEntry(
     val isWeekend: Boolean = false,
     val appNameUsed: String = "",
     val appVersion: String = "",
-    val appCrash: Boolean = false,
-    val crashDetails: String = "",
     val acceptedCount: Int = 1,
     val declinedCount: Int = 0,
     val completedCount: Int = 1,

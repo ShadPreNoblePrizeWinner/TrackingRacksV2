@@ -80,7 +80,7 @@ fun TrackingRacksApp(viewModel: GigViewModel) {
                         }
                     )
 
-                    Screen.Income -> IncomeScreen(
+                    Screen.Income -> AddGigScreen(
                         viewModel = viewModel,
                         onDone = { currentScreen = Screen.Home }
                     )

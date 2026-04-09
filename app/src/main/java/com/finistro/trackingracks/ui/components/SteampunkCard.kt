@@ -23,12 +23,10 @@ fun SteampunkCard(
     content: @Composable () -> Unit
 ) {
     Card(
-        modifier = modifier
-            .shadow(8.dp, RoundedCornerShape(8.dp)),
+        modifier = modifier,
         colors = CardDefaults.cardColors(
             containerColor = ContainerBg
         ),
-        border = BorderStroke(2.dp, Brass),
         shape = RoundedCornerShape(8.dp)
     ) {
         Box(
