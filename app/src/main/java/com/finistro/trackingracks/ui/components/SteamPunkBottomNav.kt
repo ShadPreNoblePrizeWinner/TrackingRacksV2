@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.finistro.trackingracks.ui.theme.Brass
 import com.finistro.trackingracks.ui.theme.ContainerBg
 import com.finistro.trackingracks.ui.theme.Copper
-import com.finistro.trackingracks.ui.theme.IronDark
+import com.finistro.trackingracks.ui.theme.LabelBlue
 import com.finistro.trackingracks.ui.theme.NavBlue
 
 @Composable
@@ -35,7 +35,7 @@ fun SteampunkBottomNav(
         verticalAlignment = Alignment.CenterVertically
     ) {
         listOf("Home", "Income", "Vehicle", "Expense").forEach { item ->
-            val color = if (item == current) NavBlue else Brass
+            val color = if (item == current) NavBlue else LabelBlue
 
             Text(
                 text = item,

@@ -1,5 +1,6 @@
 package com.finistro.trackingracks.ui.screens.vehicle
 
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -48,7 +49,7 @@ fun VehicleScreen(viewModel: GigViewModel) {
             value = make,
             onValueChange = { make = it },
             label = { Text("Make", color = labelColor, fontSize = 16.sp) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = inputTextColor,
                 unfocusedTextColor = inputTextColor,
@@ -63,7 +64,7 @@ fun VehicleScreen(viewModel: GigViewModel) {
             value = model,
             onValueChange = { model = it },
             label = { Text("Model", color = labelColor, fontSize = 16.sp) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = inputTextColor,
                 unfocusedTextColor = inputTextColor,
@@ -78,7 +79,7 @@ fun VehicleScreen(viewModel: GigViewModel) {
             value = year,
             onValueChange = { year = it },
             label = { Text("Year", color = labelColor, fontSize = 16.sp) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = inputTextColor,
                 unfocusedTextColor = inputTextColor,
@@ -93,7 +94,7 @@ fun VehicleScreen(viewModel: GigViewModel) {
             value = mileage,
             onValueChange = { mileage = it },
             label = { Text("Mileage", color = labelColor, fontSize = 16.sp) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = inputTextColor,
                 unfocusedTextColor = inputTextColor,
@@ -108,7 +109,7 @@ fun VehicleScreen(viewModel: GigViewModel) {
             value = mpg,
             onValueChange = { mpg = it },
             label = { Text("MPG", color = labelColor, fontSize = 16.sp) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = inputTextColor,
                 unfocusedTextColor = inputTextColor,

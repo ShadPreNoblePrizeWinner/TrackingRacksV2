@@ -1,6 +1,7 @@
 package com.finistro.trackingracks.ui.screens.addgig
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -84,7 +85,7 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
                     value = offer,
                     onValueChange = { offer = it },
                     label = { Text("Offer $", color = labelColor, fontSize = 14.sp) },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = inputTextColor,
@@ -100,7 +101,7 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
                     value = distance,
                     onValueChange = { distance = it },
                     label = { Text("Miles", color = labelColor, fontSize = 14.sp) },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = inputTextColor,
@@ -116,7 +117,7 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
             OutlinedTextField(
                 value = city,
                 onValueChange = { city = it },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                 label = { Text("City", color = labelColor, fontSize = 16.sp) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = inputTextColor,
@@ -130,10 +131,10 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
-                    value = weatherTemp,
-                    onValueChange = { weatherTemp = it },
-                    label = { Text("Temp °F", color = labelColor, fontSize = 14.sp) },
-                    modifier = Modifier.weight(1f),
+                    value = weather,
+                    onValueChange = { weather = it },
+                    label = { Text("Weather", color = labelColor, fontSize = 14.sp) },
+                    modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = inputTextColor,
@@ -146,10 +147,10 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
                 )
                 Spacer(Modifier.width(4.dp))
                 OutlinedTextField(
-                    value = weather,
-                    onValueChange = { weather = it },
-                    label = { Text("Weather", color = labelColor, fontSize = 14.sp) },
-                    modifier = Modifier.weight(1f),
+                    value = weatherTemp,
+                    onValueChange = { weatherTemp = it },
+                    label = { Text("Temp °F", color = labelColor, fontSize = 14.sp) },
+                    modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = inputTextColor,
@@ -165,7 +166,7 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
             OutlinedTextField(
                 value = appNameUsed,
                 onValueChange = { appNameUsed = it },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                 label = { Text("App Name Used", color = labelColor, fontSize = 16.sp) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = inputTextColor,
@@ -182,6 +183,7 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
                 value = date,
                 onValueChange = { date = it },
                 label = { Text("Date (YYYY-MM-DD)", color = labelColor, fontSize = 16.sp) },
+                modifier = Modifier.height(IntrinsicSize.Min),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = inputTextColor,
                     unfocusedTextColor = inputTextColor,
@@ -196,6 +198,7 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
                 value = timeOfOffer,
                 onValueChange = { timeOfOffer = it },
                 label = { Text("Time of Offer (HH:mm)", color = labelColor, fontSize = 16.sp) },
+                modifier = Modifier.height(IntrinsicSize.Min),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = inputTextColor,
                     unfocusedTextColor = inputTextColor,
@@ -219,6 +222,7 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
                 value = acceptedCount,
                 onValueChange = { acceptedCount = it },
                 label = { Text("Accepted Count", color = labelColor, fontSize = 16.sp) },
+                modifier = Modifier.height(IntrinsicSize.Min),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = inputTextColor,
                     unfocusedTextColor = inputTextColor,
@@ -233,6 +237,7 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
                 value = declinedCount,
                 onValueChange = { declinedCount = it },
                 label = { Text("Declined Count", color = labelColor, fontSize = 16.sp) },
+                modifier = Modifier.height(IntrinsicSize.Min),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = inputTextColor,
                     unfocusedTextColor = inputTextColor,
@@ -247,6 +252,7 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
                 value = completedCount,
                 onValueChange = { completedCount = it },
                 label = { Text("Completed Count", color = labelColor, fontSize = 16.sp) },
+                modifier = Modifier.height(IntrinsicSize.Min),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = inputTextColor,
                     unfocusedTextColor = inputTextColor,
@@ -261,6 +267,7 @@ fun AddGigScreen(viewModel: GigViewModel, onDone: () -> Unit) {
                 value = timeTaken,
                 onValueChange = { timeTaken = it },
                 label = { Text("Time Taken (mins)", color = labelColor, fontSize = 16.sp) },
+                modifier = Modifier.height(IntrinsicSize.Min),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = inputTextColor,
                     unfocusedTextColor = inputTextColor,

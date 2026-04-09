@@ -34,6 +34,8 @@ fun ExpenseScreen(viewModel: GigViewModel) {
     val labelColor = LabelBlue
     val inputBg = InputBg
     val inputTextColor = Color.Black
+    
+    var establishment by remember { mutableStateOf("") }
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -44,7 +46,7 @@ fun ExpenseScreen(viewModel: GigViewModel) {
         
         Spacer(Modifier.height(8.dp))
 
-        // Daily Expenses Section (Now First)
+        // 1. Daily Expenses Section (Now First)
         Text("Daily Expenses", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 16.sp)
         SteampunkCard(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -56,16 +58,14 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     fontSize = 16.sp,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    fontWeight = FontWeight.Bold
                 )
 
                 // Gas Row with border around CPG and Total
                 Box(
-                    modifier = androidx.compose.foundation.border(
-                        1.dp,
-                        Brass.copy(alpha = 0.5f),
-                        androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
-                    ).padding(8.dp)
+                    modifier = Modifier
+                        .border(1.dp, Brass.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+                        .padding(8.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -79,9 +79,9 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                             value = cpg,
                             onValueChange = { cpg = it },
                             label = { Text("CPG", color = labelColor, fontSize = 12.sp) },
-                            modifier = Modifier.weight(1f).height(48.dp),
+                            modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
                             singleLine = true,
-                            textStyle = androidx.compose.ui.text.TextStyle(color = inputTextColor, fontSize = 14.sp),
+                            textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = inputTextColor,
                                 unfocusedTextColor = inputTextColor,
@@ -102,16 +102,16 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                                             name = "Gas (CPG: $cpg)",
                                             amount = amountValue,
                                             category = "Gas",
-                                            establishment = "", // Will be updated if establishment changes?
+                                            establishment = establishment,
                                             date = LocalDate.now().toString()
                                         )
                                     )
                                 }
                             },
                             label = { Text("Total", color = labelColor, fontSize = 12.sp) },
-                            modifier = Modifier.weight(1f).height(48.dp),
+                            modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
                             singleLine = true,
-                            textStyle = androidx.compose.ui.text.TextStyle(color = inputTextColor, fontSize = 14.sp),
+                            textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = inputTextColor,
                                 unfocusedTextColor = inputTextColor,
@@ -130,8 +130,8 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ExpenseInput(label = "Food", establishment = "", viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
-                    ExpenseInput(label = "Snack", establishment = "", viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
+                    ExpenseInput(label = "Food", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
+                    ExpenseInput(label = "Snack", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
                 }
 
                 // Unforeseen/Misc row
@@ -140,19 +140,18 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ExpenseInput(label = "Unforeseen", establishment = "", viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
-                    ExpenseInput(label = "Misc", establishment = "", viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
+                    ExpenseInput(label = "Unforeseen", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
+                    ExpenseInput(label = "Misc", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
                 }
 
                 // Establishment Row (Now at the bottom of the section)
-                var establishment by remember { mutableStateOf("") }
                 OutlinedTextField(
                     value = establishment,
                     onValueChange = { establishment = it },
                     label = { Text("Establishment", color = labelColor, fontSize = 14.sp) },
-                    modifier = Modifier.fillMaxWidth().height(52.dp),
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                     singleLine = true,
-                    textStyle = androidx.compose.ui.text.TextStyle(color = inputTextColor, fontSize = 14.sp),
+                    textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = inputTextColor,
                         unfocusedTextColor = inputTextColor,
@@ -167,7 +166,7 @@ fun ExpenseScreen(viewModel: GigViewModel) {
 
         Spacer(Modifier.height(12.dp))
 
-        // Fixed Expenses Section (Now Second)
+        // 2. Fixed Expenses Section (Now Second)
         Text("Fixed Expenses", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 16.sp)
         SteampunkCard(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -194,9 +193,9 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                                     )
                                 )
                             },
-                            modifier = Modifier.width(100.dp).height(48.dp),
+                            modifier = Modifier.width(100.dp).height(IntrinsicSize.Min),
                             singleLine = true,
-                            textStyle = androidx.compose.ui.text.TextStyle(color = inputTextColor, fontSize = 14.sp),
+                            textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = inputTextColor,
                                 unfocusedTextColor = inputTextColor,
@@ -213,7 +212,7 @@ fun ExpenseScreen(viewModel: GigViewModel) {
 
         Spacer(Modifier.height(12.dp))
 
-        // Rolling Transactions Section
+        // 3. Rolling Transactions (Below Fixed Expenses)
         Text("Rolling Transactions (Last 5)", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 16.sp)
         
         SteampunkCard(modifier = Modifier.fillMaxWidth()) {
@@ -288,9 +287,9 @@ fun ExpenseInput(
             )
         },
         label = { Text(label, color = labelColor, fontSize = 12.sp) },
-        modifier = modifier.height(48.dp),
+        modifier = modifier.height(IntrinsicSize.Min),
         singleLine = true,
-        textStyle = androidx.compose.ui.text.TextStyle(color = inputTextColor, fontSize = 14.sp),
+        textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = inputTextColor,
             unfocusedTextColor = inputTextColor,

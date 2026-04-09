@@ -1,5 +1,6 @@
 package com.finistro.trackingracks.ui.screens.income
 
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -62,7 +63,7 @@ fun IncomeScreen(
                         value = offerAmount,
                         onValueChange = { offerAmount = it },
                         label = { Text("Offer $", color = labelColor, fontSize = 14.sp) },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = inputTextColor,
@@ -78,7 +79,7 @@ fun IncomeScreen(
                         value = distanceMiles,
                         onValueChange = { distanceMiles = it },
                         label = { Text("Miles", color = labelColor, fontSize = 14.sp) },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = inputTextColor,
@@ -121,7 +122,7 @@ fun IncomeScreen(
                             onValueChange = {},
                             readOnly = true,
                             label = { Text("Weather", color = labelColor, fontSize = 14.sp) },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = inputTextColor,
                                 unfocusedTextColor = inputTextColor,
@@ -154,7 +155,7 @@ fun IncomeScreen(
                         value = temperature,
                         onValueChange = { temperature = it },
                         label = { Text("Temp °F", color = labelColor, fontSize = 14.sp) },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = inputTextColor,
