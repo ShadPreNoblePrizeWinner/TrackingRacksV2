@@ -7,12 +7,12 @@ import androidx.compose.runtime.Composable
 private val SteampunkColorScheme = darkColorScheme(
     primary = Brass,
     secondary = Copper,
-    background = IronDark,
-    surface = IronMedium,
+    background = InputBg,
+    surface = ContainerBg,
     onPrimary = IronDark,
     onSecondary = IronDark,
-    onBackground = TextPrimary,
-    onSurface = TextPrimary
+    onBackground = TextDark,
+    onSurface = TextDark
 )
 
 @Composable

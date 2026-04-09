@@ -1,5 +1,6 @@
 package com.finistro.trackingracks.ui.screens.vehicle
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,9 +9,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.finistro.trackingracks.data.model.Vehicle
 import com.finistro.trackingracks.ui.components.SteampunkButton
 import com.finistro.trackingracks.ui.theme.Brass
+import com.finistro.trackingracks.ui.theme.InputBg
+import com.finistro.trackingracks.ui.theme.LabelBlue
 import com.finistro.trackingracks.ui.theme.TextPrimary
 import com.finistro.trackingracks.viewmodel.GigViewModel
 
@@ -26,23 +30,30 @@ fun VehicleScreen(viewModel: GigViewModel) {
 
     val scrollState = rememberScrollState()
 
+    val labelColor = LabelBlue
+    val inputBg = InputBg
+    val inputTextColor = Color.Black
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(InputBg)
             .padding(16.dp)
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Vehicle Information", style = MaterialTheme.typography.headlineMedium, color = Brass)
+        Text("Vehicle Information", style = MaterialTheme.typography.headlineMedium, color = Brass, fontSize = 30.sp)
 
         OutlinedTextField(
             value = make,
             onValueChange = { make = it },
-            label = { Text("Make", color = TextPrimary) },
+            label = { Text("Make", color = labelColor, fontSize = 16.sp) },
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
+                focusedTextColor = inputTextColor,
+                unfocusedTextColor = inputTextColor,
+                focusedContainerColor = inputBg,
+                unfocusedContainerColor = inputBg,
                 focusedBorderColor = Brass,
                 unfocusedBorderColor = Brass.copy(alpha = 0.5f)
             )
@@ -51,11 +62,13 @@ fun VehicleScreen(viewModel: GigViewModel) {
         OutlinedTextField(
             value = model,
             onValueChange = { model = it },
-            label = { Text("Model", color = TextPrimary) },
+            label = { Text("Model", color = labelColor, fontSize = 16.sp) },
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
+                focusedTextColor = inputTextColor,
+                unfocusedTextColor = inputTextColor,
+                focusedContainerColor = inputBg,
+                unfocusedContainerColor = inputBg,
                 focusedBorderColor = Brass,
                 unfocusedBorderColor = Brass.copy(alpha = 0.5f)
             )
@@ -64,11 +77,13 @@ fun VehicleScreen(viewModel: GigViewModel) {
         OutlinedTextField(
             value = year,
             onValueChange = { year = it },
-            label = { Text("Year", color = TextPrimary) },
+            label = { Text("Year", color = labelColor, fontSize = 16.sp) },
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
+                focusedTextColor = inputTextColor,
+                unfocusedTextColor = inputTextColor,
+                focusedContainerColor = inputBg,
+                unfocusedContainerColor = inputBg,
                 focusedBorderColor = Brass,
                 unfocusedBorderColor = Brass.copy(alpha = 0.5f)
             )
@@ -77,11 +92,13 @@ fun VehicleScreen(viewModel: GigViewModel) {
         OutlinedTextField(
             value = mileage,
             onValueChange = { mileage = it },
-            label = { Text("Mileage", color = TextPrimary) },
+            label = { Text("Mileage", color = labelColor, fontSize = 16.sp) },
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
+                focusedTextColor = inputTextColor,
+                unfocusedTextColor = inputTextColor,
+                focusedContainerColor = inputBg,
+                unfocusedContainerColor = inputBg,
                 focusedBorderColor = Brass,
                 unfocusedBorderColor = Brass.copy(alpha = 0.5f)
             )
@@ -90,11 +107,13 @@ fun VehicleScreen(viewModel: GigViewModel) {
         OutlinedTextField(
             value = mpg,
             onValueChange = { mpg = it },
-            label = { Text("MPG", color = TextPrimary) },
+            label = { Text("MPG", color = labelColor, fontSize = 16.sp) },
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
+                focusedTextColor = inputTextColor,
+                unfocusedTextColor = inputTextColor,
+                focusedContainerColor = inputBg,
+                unfocusedContainerColor = inputBg,
                 focusedBorderColor = Brass,
                 unfocusedBorderColor = Brass.copy(alpha = 0.5f)
             )

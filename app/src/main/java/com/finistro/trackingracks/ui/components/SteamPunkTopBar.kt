@@ -12,7 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.finistro.trackingracks.ui.theme.Brass
+import com.finistro.trackingracks.ui.theme.ContainerBg
 import com.finistro.trackingracks.ui.theme.IronDark
 import com.finistro.trackingracks.ui.theme.IronMedium
 
@@ -22,15 +24,11 @@ fun SteampunkTopBar(title: String) {
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp)
-            .background(
-                Brush.horizontalGradient(
-                    listOf(IronDark, IronMedium)
-                )
-            )
+            .background(ContainerBg)
             .border(2.dp, Brass)
             .padding(horizontal = 16.dp),
         contentAlignment = Alignment.CenterStart
     ) {
-        Text(text = title, color = Brass)
+        Text(text = title, color = Brass, fontSize = 20.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
     }
 }

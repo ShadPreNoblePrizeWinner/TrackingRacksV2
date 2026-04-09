@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import com.finistro.trackingracks.ui.theme.Brass
+import com.finistro.trackingracks.ui.theme.ContainerBg
 import com.finistro.trackingracks.ui.theme.IronLight
 import com.finistro.trackingracks.ui.theme.IronMedium
 
@@ -25,18 +26,14 @@ fun SteampunkCard(
         modifier = modifier
             .shadow(8.dp, RoundedCornerShape(8.dp)),
         colors = CardDefaults.cardColors(
-            containerColor = IronMedium
+            containerColor = ContainerBg
         ),
         border = BorderStroke(2.dp, Brass),
         shape = RoundedCornerShape(8.dp)
     ) {
         Box(
             modifier = Modifier
-                .background(
-                    Brush.verticalGradient(
-                        listOf(IronMedium, IronLight)
-                    )
-                )
+                .background(ContainerBg)
                 .padding(16.dp)
         ) {
             content()

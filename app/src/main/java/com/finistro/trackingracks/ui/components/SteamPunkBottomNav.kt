@@ -13,10 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.finistro.trackingracks.ui.theme.Brass
+import com.finistro.trackingracks.ui.theme.ContainerBg
 import com.finistro.trackingracks.ui.theme.Copper
 import com.finistro.trackingracks.ui.theme.IronDark
-import com.finistro.trackingracks.ui.theme.NeonGreen
+import com.finistro.trackingracks.ui.theme.NavBlue
 
 @Composable
 fun SteampunkBottomNav(
@@ -27,17 +29,18 @@ fun SteampunkBottomNav(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .background(IronDark)
+            .background(ContainerBg)
             .border(2.dp, Copper),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         listOf("Home", "Income", "Vehicle", "Expense").forEach { item ->
-            val color = if (item == current) NeonGreen else Brass
+            val color = if (item == current) NavBlue else Brass
 
             Text(
                 text = item,
                 color = color,
+                fontSize = 16.sp,
                 modifier = Modifier
                     .clickable { onSelect(item) }
                     .padding(8.dp)

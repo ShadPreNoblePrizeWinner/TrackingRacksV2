@@ -9,12 +9,13 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Surface
-import com.finistro.trackingracks.ui.theme.IronLight
+import com.finistro.trackingracks.ui.theme.InputBg
 import com.finistro.trackingracks.ui.components.SteampunkBottomNav
 import com.finistro.trackingracks.ui.screens.addgig.AddGigScreen
 import com.finistro.trackingracks.ui.screens.expense.ExpenseScreen
@@ -38,7 +39,7 @@ fun TrackingRacksApp(viewModel: GigViewModel) {
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = IronLight
+        color = InputBg
     ) {
         Column(
             modifier = Modifier
@@ -92,6 +93,13 @@ fun TrackingRacksApp(viewModel: GigViewModel) {
                         viewModel = viewModel,
                         onDone = { currentScreen = Screen.Home }
                     )
+
+                    Screen.Offers -> {
+                        // Placeholder for OffersScreen
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
+                            Text("Offers Screen (Coming Soon)", color = com.finistro.trackingracks.ui.theme.Brass)
+                        }
+                    }
                 }
             }
 
@@ -111,5 +119,6 @@ enum class Screen {
     AddGig,
     Income,
     Vehicle,
-    Expense
+    Expense,
+    Offers
 }

@@ -1,9 +1,10 @@
 package com.finistro.trackingracks.ui.screens.expense
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -12,14 +13,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.finistro.trackingracks.data.model.DailyExpense
 import com.finistro.trackingracks.data.model.FixedExpense
 import com.finistro.trackingracks.ui.components.SteampunkCard
-import com.finistro.trackingracks.ui.theme.Brass
-import com.finistro.trackingracks.ui.theme.NeonRed
-import com.finistro.trackingracks.ui.theme.TextSecondary
+import com.finistro.trackingracks.ui.theme.*
 import com.finistro.trackingracks.viewmodel.GigViewModel
 import java.time.LocalDate
 
@@ -29,16 +31,144 @@ fun ExpenseScreen(viewModel: GigViewModel) {
     val dailyExpenses by viewModel.dailyExpenses.collectAsState()
     val scrollState = rememberScrollState()
 
+    val labelColor = LabelBlue
+    val inputBg = InputBg
+    val inputTextColor = Color.Black
+
     Column(modifier = Modifier
         .fillMaxSize()
+        .background(InputBg)
         .padding(16.dp)
         .verticalScroll(scrollState)) {
-        Text("Expenses", style = MaterialTheme.typography.headlineSmall, color = Brass)
+        Text("Expenses", style = MaterialTheme.typography.headlineSmall, color = Brass, fontSize = 26.sp)
         
         Spacer(Modifier.height(8.dp))
 
-        // Fixed Expenses Section
-        Text("Fixed Expenses", color = Brass, style = MaterialTheme.typography.titleSmall)
+        // Daily Expenses Section (Now First)
+        Text("Daily Expenses", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 16.sp)
+        SteampunkCard(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                
+                // Gas Header Centered
+                Text(
+                    text = "Gas",
+                    color = labelColor,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+
+                // Gas Row with border around CPG and Total
+                Box(
+                    modifier = androidx.compose.foundation.border(
+                        1.dp,
+                        Brass.copy(alpha = 0.5f),
+                        androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
+                    ).padding(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        var cpg by remember { mutableStateOf("") }
+                        var totalAmount by remember { mutableStateOf("") }
+
+                        OutlinedTextField(
+                            value = cpg,
+                            onValueChange = { cpg = it },
+                            label = { Text("CPG", color = labelColor, fontSize = 12.sp) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            singleLine = true,
+                            textStyle = androidx.compose.ui.text.TextStyle(color = inputTextColor, fontSize = 14.sp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = inputTextColor,
+                                unfocusedTextColor = inputTextColor,
+                                focusedBorderColor = Brass,
+                                unfocusedBorderColor = Brass.copy(alpha = 0.5f),
+                                focusedContainerColor = inputBg,
+                                unfocusedContainerColor = inputBg,
+                            )
+                        )
+                        OutlinedTextField(
+                            value = totalAmount,
+                            onValueChange = {
+                                totalAmount = it
+                                val amountValue = it.toDoubleOrNull() ?: 0.0
+                                if (amountValue > 0) {
+                                    viewModel.addDailyExpense(
+                                        DailyExpense(
+                                            name = "Gas (CPG: $cpg)",
+                                            amount = amountValue,
+                                            category = "Gas",
+                                            establishment = "", // Will be updated if establishment changes?
+                                            date = LocalDate.now().toString()
+                                        )
+                                    )
+                                }
+                            },
+                            label = { Text("Total", color = labelColor, fontSize = 12.sp) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            singleLine = true,
+                            textStyle = androidx.compose.ui.text.TextStyle(color = inputTextColor, fontSize = 14.sp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = inputTextColor,
+                                unfocusedTextColor = inputTextColor,
+                                focusedBorderColor = Brass,
+                                unfocusedBorderColor = Brass.copy(alpha = 0.5f),
+                                focusedContainerColor = inputBg,
+                                unfocusedContainerColor = inputBg,
+                            )
+                        )
+                    }
+                }
+
+                // Food/Snack row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ExpenseInput(label = "Food", establishment = "", viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
+                    ExpenseInput(label = "Snack", establishment = "", viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
+                }
+
+                // Unforeseen/Misc row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ExpenseInput(label = "Unforeseen", establishment = "", viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
+                    ExpenseInput(label = "Misc", establishment = "", viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
+                }
+
+                // Establishment Row (Now at the bottom of the section)
+                var establishment by remember { mutableStateOf("") }
+                OutlinedTextField(
+                    value = establishment,
+                    onValueChange = { establishment = it },
+                    label = { Text("Establishment", color = labelColor, fontSize = 14.sp) },
+                    modifier = Modifier.fillMaxWidth().height(52.dp),
+                    singleLine = true,
+                    textStyle = androidx.compose.ui.text.TextStyle(color = inputTextColor, fontSize = 14.sp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = inputTextColor,
+                        unfocusedTextColor = inputTextColor,
+                        focusedBorderColor = Brass,
+                        unfocusedBorderColor = Brass.copy(alpha = 0.5f),
+                        focusedContainerColor = inputBg,
+                        unfocusedContainerColor = inputBg,
+                    )
+                )
+            }
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        // Fixed Expenses Section (Now Second)
+        Text("Fixed Expenses", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 16.sp)
         SteampunkCard(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 listOf("Insurance", "Lease/Loan", "Subs").forEach { name ->
@@ -49,7 +179,7 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(name, color = Brass, modifier = Modifier.weight(1f), fontSize = 14.sp)
+                        Text(name, color = labelColor, modifier = Modifier.weight(1f), fontSize = 16.sp)
                         OutlinedTextField(
                             value = amount,
                             onValueChange = {
@@ -66,14 +196,14 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                             },
                             modifier = Modifier.width(100.dp).height(48.dp),
                             singleLine = true,
-                            textStyle = MaterialTheme.typography.bodySmall,
+                            textStyle = androidx.compose.ui.text.TextStyle(color = inputTextColor, fontSize = 14.sp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Brass,
-                                unfocusedTextColor = Brass,
+                                focusedTextColor = inputTextColor,
+                                unfocusedTextColor = inputTextColor,
                                 focusedBorderColor = Brass,
                                 unfocusedBorderColor = Brass.copy(alpha = 0.5f),
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
+                                focusedContainerColor = inputBg,
+                                unfocusedContainerColor = inputBg,
                             )
                         )
                     }
@@ -83,143 +213,44 @@ fun ExpenseScreen(viewModel: GigViewModel) {
 
         Spacer(Modifier.height(12.dp))
 
-        // Daily Expenses Section
-        Text("Daily Expenses", color = Brass, style = MaterialTheme.typography.titleSmall)
+        // Rolling Transactions Section
+        Text("Rolling Transactions (Last 5)", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 16.sp)
+        
         SteampunkCard(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                
-                // Establishment Row
-                var establishment by remember { mutableStateOf("") }
-                OutlinedTextField(
-                    value = establishment,
-                    onValueChange = { establishment = it },
-                    label = { Text("Establishment", color = Brass, fontSize = 12.sp) },
-                    modifier = Modifier.fillMaxWidth().height(52.dp),
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.bodySmall,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Brass,
-                        unfocusedTextColor = Brass,
-                        focusedBorderColor = Brass,
-                        unfocusedBorderColor = Brass.copy(alpha = 0.5f),
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                    )
-                )
-
-                // Gas row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Gas", color = Brass, modifier = Modifier.width(40.dp), fontSize = 14.sp)
-                    
-                    var cpg by remember { mutableStateOf("") }
-                    var totalAmount by remember { mutableStateOf("") }
-
-                    OutlinedTextField(
-                        value = cpg,
-                        onValueChange = { cpg = it },
-                        label = { Text("CPG", color = Brass, fontSize = 10.sp) },
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        singleLine = true,
-                        textStyle = MaterialTheme.typography.bodySmall,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Brass,
-                            unfocusedTextColor = Brass,
-                            focusedBorderColor = Brass,
-                            unfocusedBorderColor = Brass.copy(alpha = 0.5f),
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                        )
-                    )
-                    OutlinedTextField(
-                        value = totalAmount,
-                        onValueChange = {
-                            totalAmount = it
-                            val amountValue = it.toDoubleOrNull() ?: 0.0
-                            if (amountValue > 0) {
-                                viewModel.addDailyExpense(
-                                    DailyExpense(
-                                        name = "Gas (CPG: $cpg)",
-                                        amount = amountValue,
-                                        category = "Gas",
-                                        establishment = establishment,
-                                        date = LocalDate.now().toString()
-                                    )
-                                )
-                            }
-                        },
-                        label = { Text("Total", color = Brass, fontSize = 10.sp) },
-                        modifier = Modifier.weight(1f).height(48.dp),
-                        singleLine = true,
-                        textStyle = MaterialTheme.typography.bodySmall,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Brass,
-                            unfocusedTextColor = Brass,
-                            focusedBorderColor = Brass,
-                            unfocusedBorderColor = Brass.copy(alpha = 0.5f),
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                        )
-                    )
+            Column(modifier = Modifier.padding(8.dp)) {
+                if (dailyExpenses.isEmpty()) {
+                    Text("No transactions yet", color = TextSecondary, modifier = Modifier.padding(8.dp))
                 }
-
-                // Food/Snack row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ExpenseInput(label = "Food", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, modifier = Modifier.weight(1f))
-                    ExpenseInput(label = "Snack", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, modifier = Modifier.weight(1f))
-                }
-
-                // Unforeseen/Misc row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ExpenseInput(label = "Unforeseen", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, modifier = Modifier.weight(1f))
-                    ExpenseInput(label = "Misc", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, modifier = Modifier.weight(1f))
-                }
-
-                Spacer(Modifier.height(8.dp))
-                Text("Recent Activity", color = Brass, style = MaterialTheme.typography.labelLarge)
-                
-                // Condensed Recent Activity
-                Column(modifier = Modifier.heightIn(max = 200.dp).verticalScroll(rememberScrollState())) {
-                    dailyExpenses.sortedByDescending { it.date }.forEach { expense ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 2.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text("${expense.date} - ${expense.category}", color = Brass, fontSize = 12.sp)
-                                if (expense.establishment.isNotBlank()) {
-                                    Text(expense.establishment, color = TextSecondary, fontSize = 10.sp)
-                                }
-                                Text(
-                                    "$${"%.2f".format(expense.amount)}",
-                                    color = TextSecondary,
-                                    fontSize = 11.sp
-                                )
+                dailyExpenses.sortedByDescending { it.date }.take(5).forEach { expense ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("${expense.date} - ${expense.category}", color = labelColor, fontSize = 14.sp)
+                            if (expense.establishment.isNotBlank()) {
+                                Text(expense.establishment, color = TextSecondary, fontSize = 12.sp)
                             }
-                            IconButton(onClick = { viewModel.deleteDailyExpense(expense.id) }, modifier = Modifier.size(24.dp)) {
-                                Icon(
-                                    Icons.Default.Delete,
-                                    contentDescription = "Delete",
-                                    tint = NeonRed,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
+                            Text(
+                                "$${"%.2f".format(expense.amount)}",
+                                color = TextDark,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        IconButton(onClick = { viewModel.deleteDailyExpense(expense.id) }, modifier = Modifier.size(24.dp)) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = NeonRed,
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
                     }
+                    HorizontalDivider(color = Brass.copy(alpha = 0.2f), thickness = 0.5.dp)
                 }
             }
         }
@@ -232,6 +263,9 @@ fun ExpenseInput(
     establishment: String,
     viewModel: GigViewModel,
     dailyExpenses: List<DailyExpense>,
+    labelColor: Color,
+    inputBg: Color,
+    inputTextColor: Color,
     modifier: Modifier = Modifier
 ) {
     val expense = dailyExpenses.find { it.category == label && it.date == LocalDate.now().toString() }
@@ -253,17 +287,17 @@ fun ExpenseInput(
                 )
             )
         },
-        label = { Text(label, color = Brass, fontSize = 10.sp) },
+        label = { Text(label, color = labelColor, fontSize = 12.sp) },
         modifier = modifier.height(48.dp),
         singleLine = true,
-        textStyle = MaterialTheme.typography.bodySmall,
+        textStyle = androidx.compose.ui.text.TextStyle(color = inputTextColor, fontSize = 14.sp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = Brass,
-            unfocusedTextColor = Brass,
+            focusedTextColor = inputTextColor,
+            unfocusedTextColor = inputTextColor,
             focusedBorderColor = Brass,
             unfocusedBorderColor = Brass.copy(alpha = 0.5f),
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
+            focusedContainerColor = inputBg,
+            unfocusedContainerColor = inputBg,
         )
     )
 }
