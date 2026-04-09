@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Vehicle(
+    val id: String = java.util.UUID.randomUUID().toString(),
+    val nickname: String = "Primary Vehicle",
     val make: String = "",
     val model: String = "",
     val year: String = "",

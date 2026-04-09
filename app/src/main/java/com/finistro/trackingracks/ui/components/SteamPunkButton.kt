@@ -33,8 +33,7 @@ fun SteampunkButton(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(6.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = IronMedium),
-        border = BorderStroke(2.dp, borderColor)
+        colors = ButtonDefaults.buttonColors(containerColor = IronMedium)
     ) {
         Box(
             modifier = Modifier

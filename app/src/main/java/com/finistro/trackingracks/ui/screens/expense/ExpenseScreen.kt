@@ -1,5 +1,6 @@
 package com.finistro.trackingracks.ui.screens.expense
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -7,11 +8,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +27,8 @@ import com.finistro.trackingracks.ui.components.SteampunkCard
 import com.finistro.trackingracks.ui.theme.*
 import com.finistro.trackingracks.viewmodel.GigViewModel
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun ExpenseScreen(viewModel: GigViewModel) {
@@ -36,20 +41,25 @@ fun ExpenseScreen(viewModel: GigViewModel) {
     val inputTextColor = Color.Black
     
     var establishment by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("Meal") }
+    var categoryExpanded by remember { mutableStateOf(false) }
+    val categories = listOf("Meal", "Snack", "Beverages", "Unforeseen", "Vices", "Misc")
+    var city by remember { mutableStateOf("") }
+    var pricePerUnit by remember { mutableStateOf("") }
 
     Column(modifier = Modifier
         .fillMaxSize()
         .background(InputBg)
-        .padding(16.dp)
+        .padding(10.dp)
         .verticalScroll(scrollState)) {
         Text("Expenses", style = MaterialTheme.typography.headlineSmall, color = Brass, fontSize = 26.sp)
         
         Spacer(Modifier.height(8.dp))
 
         // 1. Daily Expenses Section (Now First)
-        Text("Daily Expenses", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 16.sp)
+        Text("Daily Expenses", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 17.sp, fontWeight = FontWeight.Bold)
         SteampunkCard(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 
                 // Gas Header Centered
                 Text(
@@ -64,7 +74,7 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                 // Gas Row with border around CPG and Total
                 Box(
                     modifier = Modifier
-                        .border(1.dp, Brass.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+                        .background(ContainerBg, RoundedCornerShape(8.dp))
                         .padding(8.dp)
                 ) {
                     Row(
@@ -72,12 +82,9 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        var cpg by remember { mutableStateOf("") }
-                        var totalAmount by remember { mutableStateOf("") }
-
                         OutlinedTextField(
-                            value = cpg,
-                            onValueChange = { cpg = it },
+                            value = pricePerUnit,
+                            onValueChange = { pricePerUnit = it },
                             label = { Text("CPG", color = labelColor, fontSize = 12.sp) },
                             modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
                             singleLine = true,
@@ -91,27 +98,37 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                                 unfocusedContainerColor = inputBg,
                             )
                         )
+                        ExpenseInput(
+                            label = "Total",
+                            establishment = establishment,
+                            viewModel = viewModel,
+                            dailyExpenses = dailyExpenses,
+                            labelColor = labelColor,
+                            inputBg = inputBg,
+                            inputTextColor = inputTextColor,
+                            modifier = Modifier.weight(1f),
+                            customCategory = "Gas",
+                            customName = "Gas (CPG: $pricePerUnit)"
+                        )
+                    }
+                }
+
+                // Food Dropdown & Input Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(modifier = Modifier.weight(1f)) {
                         OutlinedTextField(
-                            value = totalAmount,
-                            onValueChange = {
-                                totalAmount = it
-                                val amountValue = it.toDoubleOrNull() ?: 0.0
-                                if (amountValue > 0) {
-                                    viewModel.addDailyExpense(
-                                        DailyExpense(
-                                            name = "Gas (CPG: $cpg)",
-                                            amount = amountValue,
-                                            category = "Gas",
-                                            establishment = establishment,
-                                            date = LocalDate.now().toString()
-                                        )
-                                    )
-                                }
+                            value = selectedCategory,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Category", color = labelColor, fontSize = 12.sp) },
+                            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                            trailingIcon = {
+                                Icon(Icons.Default.ArrowDropDown, "Drop Down", tint = Brass, modifier = Modifier.clickable { categoryExpanded = true })
                             },
-                            label = { Text("Total", color = labelColor, fontSize = 12.sp) },
-                            modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
-                            singleLine = true,
-                            textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = inputTextColor,
                                 unfocusedTextColor = inputTextColor,
@@ -121,34 +138,57 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                                 unfocusedContainerColor = inputBg,
                             )
                         )
+                        DropdownMenu(
+                            expanded = categoryExpanded,
+                            onDismissRequest = { categoryExpanded = false }
+                        ) {
+                            categories.forEach { category ->
+                                DropdownMenuItem(
+                                    text = { Text(category) },
+                                    onClick = {
+                                        selectedCategory = category
+                                        categoryExpanded = false
+                                    }
+                                )
+                            }
+                        }
                     }
+
+                    ExpenseInput(
+                        label = selectedCategory,
+                        establishment = establishment,
+                        viewModel = viewModel,
+                        dailyExpenses = dailyExpenses,
+                        labelColor = labelColor,
+                        inputBg = inputBg,
+                        inputTextColor = inputTextColor,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
 
-                // Food/Snack row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ExpenseInput(label = "Food", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
-                    ExpenseInput(label = "Snack", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
-                }
-
-                // Unforeseen/Misc row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ExpenseInput(label = "Unforeseen", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
-                    ExpenseInput(label = "Misc", establishment = establishment, viewModel = viewModel, dailyExpenses = dailyExpenses, labelColor = labelColor, inputBg = inputBg, inputTextColor = inputTextColor, modifier = Modifier.weight(1f))
-                }
-
-                // Establishment Row (Now at the bottom of the section)
+                // Establishment Row
                 OutlinedTextField(
                     value = establishment,
                     onValueChange = { establishment = it },
                     label = { Text("Establishment", color = labelColor, fontSize = 14.sp) },
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                    singleLine = true,
+                    textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = inputTextColor,
+                        unfocusedTextColor = inputTextColor,
+                        focusedBorderColor = Brass,
+                        unfocusedBorderColor = Brass.copy(alpha = 0.5f),
+                        focusedContainerColor = inputBg,
+                        unfocusedContainerColor = inputBg,
+                    )
+                )
+
+                // City Row
+                OutlinedTextField(
+                    value = city,
+                    onValueChange = { city = it },
+                    label = { Text("City", color = labelColor, fontSize = 14.sp) },
                     modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                     singleLine = true,
                     textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
@@ -167,33 +207,67 @@ fun ExpenseScreen(viewModel: GigViewModel) {
         Spacer(Modifier.height(12.dp))
 
         // 2. Fixed Expenses Section (Now Second)
-        Text("Fixed Expenses", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 16.sp)
+        Text("Fixed Expenses", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 17.sp, fontWeight = FontWeight.Bold)
         SteampunkCard(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                listOf("Insurance", "Lease/Loan", "Subs").forEach { name ->
-                    val expense = fixedExpenses.find { it.name == name }
-                    var amount by remember(expense) { mutableStateOf(expense?.amount?.toString() ?: "") }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(name, color = labelColor, modifier = Modifier.weight(1f), fontSize = 16.sp)
+            Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Insurance and Lease/Loan Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Insurance
+                    val insuranceExp = fixedExpenses.find { it.name == "Insurance" }
+                    var insuranceAmount by remember(insuranceExp) { mutableStateOf(insuranceExp?.amount?.toString() ?: "") }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Insurance", color = labelColor, fontSize = 14.sp)
                         OutlinedTextField(
-                            value = amount,
+                            value = insuranceAmount,
                             onValueChange = {
-                                amount = it
+                                insuranceAmount = it
                                 val doubleAmount = it.toDoubleOrNull() ?: 0.0
                                 viewModel.addFixedExpense(
                                     FixedExpense(
-                                        id = expense?.id ?: java.util.UUID.randomUUID().toString(),
-                                        name = name,
+                                        id = insuranceExp?.id ?: java.util.UUID.randomUUID().toString(),
+                                        name = "Insurance",
                                         amount = doubleAmount,
                                         frequency = "Monthly"
                                     )
                                 )
                             },
-                            modifier = Modifier.width(100.dp).height(IntrinsicSize.Min),
+                            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                            singleLine = true,
+                            textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = inputTextColor,
+                                unfocusedTextColor = inputTextColor,
+                                focusedBorderColor = Brass,
+                                unfocusedBorderColor = Brass.copy(alpha = 0.5f),
+                                focusedContainerColor = inputBg,
+                                unfocusedContainerColor = inputBg,
+                            )
+                        )
+                    }
+
+                    // Lease/Loan
+                    val loanExp = fixedExpenses.find { it.name == "Lease/Loan" }
+                    var loanAmount by remember(loanExp) { mutableStateOf(loanExp?.amount?.toString() ?: "") }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Loan", color = labelColor, fontSize = 14.sp)
+                        OutlinedTextField(
+                            value = loanAmount,
+                            onValueChange = {
+                                loanAmount = it
+                                val doubleAmount = it.toDoubleOrNull() ?: 0.0
+                                viewModel.addFixedExpense(
+                                    FixedExpense(
+                                        id = loanExp?.id ?: java.util.UUID.randomUUID().toString(),
+                                        name = "Lease/Loan",
+                                        amount = doubleAmount,
+                                        frequency = "Monthly"
+                                    )
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                             singleLine = true,
                             textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -207,18 +281,54 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                         )
                     }
                 }
+
+                // Subscriptions Row
+                val subsExp = fixedExpenses.find { it.name == "Subscriptions" }
+                var subsAmount by remember(subsExp) { mutableStateOf(subsExp?.amount?.toString() ?: "") }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Subscriptions", color = labelColor, modifier = Modifier.weight(1f), fontSize = 16.sp)
+                    OutlinedTextField(
+                        value = subsAmount,
+                        onValueChange = {
+                            subsAmount = it
+                            val doubleAmount = it.toDoubleOrNull() ?: 0.0
+                            viewModel.addFixedExpense(
+                                FixedExpense(
+                                    id = subsExp?.id ?: java.util.UUID.randomUUID().toString(),
+                                    name = "Subscriptions",
+                                    amount = doubleAmount,
+                                    frequency = "Monthly"
+                                )
+                            )
+                        },
+                        modifier = Modifier.width(100.dp).height(IntrinsicSize.Min),
+                        singleLine = true,
+                        textStyle = TextStyle(color = inputTextColor, fontSize = 14.sp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = inputTextColor,
+                            unfocusedTextColor = inputTextColor,
+                            focusedBorderColor = Brass,
+                            unfocusedBorderColor = Brass.copy(alpha = 0.5f),
+                            focusedContainerColor = inputBg,
+                            unfocusedContainerColor = inputBg,
+                        )
+                    )
+                }
             }
         }
 
         Spacer(Modifier.height(12.dp))
 
         // 3. Rolling Transactions (Below Fixed Expenses)
-        Text("Rolling Transactions (Last 5)", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 16.sp)
+        Text("Rolling Transactions (Last 5)", color = labelColor, style = MaterialTheme.typography.titleSmall, fontSize = 17.sp, fontWeight = FontWeight.Bold)
         
         SteampunkCard(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(8.dp)) {
+            Column(modifier = Modifier.padding(10.dp)) {
                 if (dailyExpenses.isEmpty()) {
-                    Text("No transactions yet", color = TextSecondary, modifier = Modifier.padding(8.dp))
+                    Text("No transactions yet", color = TextSecondary, modifier = Modifier.padding(10.dp))
                 }
                 dailyExpenses.sortedByDescending { it.date }.take(5).forEach { expense ->
                     Row(
@@ -228,26 +338,23 @@ fun ExpenseScreen(viewModel: GigViewModel) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("${expense.date} - ${expense.category}", color = labelColor, fontSize = 14.sp)
-                            if (expense.establishment.isNotBlank()) {
-                                Text(expense.establishment, color = TextSecondary, fontSize = 12.sp)
-                            }
-                            Text(
-                                "$${"%.2f".format(expense.amount)}",
-                                color = TextDark,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        IconButton(onClick = { viewModel.deleteDailyExpense(expense.id) }, modifier = Modifier.size(24.dp)) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = "Delete",
-                                tint = NeonRed,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
+                        val parsedDate = try { LocalDate.parse(expense.date) } catch (e: Exception) { LocalDate.now() }
+                        val dayName = parsedDate.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, Locale.getDefault())
+                        val dateShort = parsedDate.format(DateTimeFormatter.ofPattern("MM/dd"))
+                        
+                        Text(
+                            text = "$dayName, $dateShort ${expense.establishment.ifBlank { expense.category }}",
+                            color = labelColor,
+                            fontSize = 14.sp,
+                            modifier = Modifier.weight(1f)
+                        )
+                        
+                        Text(
+                            text = "$${"%.2f".format(expense.amount)}",
+                            color = Brass,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                     HorizontalDivider(color = Brass.copy(alpha = 0.2f), thickness = 0.5.dp)
                 }
@@ -265,9 +372,12 @@ fun ExpenseInput(
     labelColor: Color,
     inputBg: Color,
     inputTextColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    customCategory: String? = null,
+    customName: String? = null
 ) {
-    val expense = dailyExpenses.find { it.category == label && it.date == LocalDate.now().toString() }
+    val categoryToFind = customCategory ?: label
+    val expense = dailyExpenses.find { it.category == categoryToFind && it.date == LocalDate.now().toString() }
     var amountText by remember(expense) { mutableStateOf(expense?.amount?.toString() ?: "") }
 
     OutlinedTextField(
@@ -278,9 +388,9 @@ fun ExpenseInput(
             viewModel.addDailyExpense(
                 DailyExpense(
                     id = expense?.id ?: java.util.UUID.randomUUID().toString(),
-                    name = label,
+                    name = customName ?: label,
                     amount = doubleAmount,
-                    category = label,
+                    category = categoryToFind,
                     establishment = establishment,
                     date = LocalDate.now().toString()
                 )
