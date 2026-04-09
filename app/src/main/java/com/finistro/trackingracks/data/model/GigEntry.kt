@@ -13,6 +13,7 @@ data class GigEntry(
     val city: String = "",
     val state: String = "",
     val isDoubleOrder: Boolean = false,
+    val isAddOn: Boolean = false,
     val isLowball: Double = 0.0,
     val gasPrice: Double = 0.0,
     val weather: String = "",
@@ -25,5 +26,9 @@ data class GigEntry(
     val appNameUsed: String = "",
     val appVersion: String = "",
     val appCrash: Boolean = false,
-    val crashDetails: String = ""
+    val crashDetails: String = "",
+    val acceptedCount: Int = 1,
+    val declinedCount: Int = 0,
+    val completedCount: Int = 1,
+    val timeTaken: Int = 0
 )

@@ -32,7 +32,7 @@ fun SteampunkBottomNav(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        listOf("Home", "Dashboard", "Heatmap", "Expense").forEach { item ->
+        listOf("Home", "Income", "Vehicle", "Expense").forEach { item ->
             val color = if (item == current) NeonGreen else Brass
 
             Text(

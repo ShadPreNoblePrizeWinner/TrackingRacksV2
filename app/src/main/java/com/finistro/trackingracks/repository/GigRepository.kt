@@ -4,6 +4,7 @@ import android.content.Context
 import com.finistro.trackingracks.data.model.DailyExpense
 import com.finistro.trackingracks.data.model.FixedExpense
 import com.finistro.trackingracks.data.model.GigEntry
+import com.finistro.trackingracks.data.model.Vehicle
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -14,11 +15,13 @@ class GigRepository(private val context: Context) {
     private val gigsFileName = "gigs.json"
     private val fixedExpensesFileName = "fixed_expenses.json"
     private val dailyExpensesFileName = "daily_expenses.json"
+    private val vehicleFileName = "vehicle.json"
     private val json = Json { prettyPrint = true; ignoreUnknownKeys = true }
 
     private fun gigsFile() = File(context.filesDir, gigsFileName)
     private fun fixedExpensesFile() = File(context.filesDir, fixedExpensesFileName)
     private fun dailyExpensesFile() = File(context.filesDir, dailyExpensesFileName)
+    private fun vehicleFile() = File(context.filesDir, vehicleFileName)
 
     fun loadGigs(): List<GigEntry> {
         val f = gigsFile()
@@ -78,5 +81,22 @@ class GigRepository(private val context: Context) {
     fun deleteDailyExpense(id: String) {
         val list = loadDailyExpenses().filter { it.id != id }
         saveDailyExpenses(list)
+    }
+
+    fun clearAllData() {
+        gigsFile().delete()
+        fixedExpensesFile().delete()
+        dailyExpensesFile().delete()
+        vehicleFile().delete()
+    }
+
+    fun loadVehicle(): Vehicle {
+        val f = vehicleFile()
+        if (!f.exists()) return Vehicle()
+        return json.decodeFromString(f.readText())
+    }
+
+    fun saveVehicle(vehicle: Vehicle) {
+        vehicleFile().writeText(json.encodeToString(vehicle))
     }
 }

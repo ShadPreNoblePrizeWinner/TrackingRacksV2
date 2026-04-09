@@ -17,10 +17,10 @@ import androidx.compose.material3.Surface
 import com.finistro.trackingracks.ui.theme.IronLight
 import com.finistro.trackingracks.ui.components.SteampunkBottomNav
 import com.finistro.trackingracks.ui.screens.addgig.AddGigScreen
-import com.finistro.trackingracks.ui.screens.dashboard.DashboardScreen
 import com.finistro.trackingracks.ui.screens.expense.ExpenseScreen
-import com.finistro.trackingracks.ui.screens.heatmap.HeatmapScreen
 import com.finistro.trackingracks.ui.screens.home.HomeScreen
+import com.finistro.trackingracks.ui.screens.income.IncomeScreen
+import com.finistro.trackingracks.ui.screens.vehicle.VehicleScreen
 import com.finistro.trackingracks.viewmodel.GigViewModel
 
 @Composable
@@ -79,32 +79,29 @@ fun TrackingRacksApp(viewModel: GigViewModel) {
                         }
                     )
 
-                    Screen.AddGig -> AddGigScreen(
+                    Screen.Income -> IncomeScreen(
                         viewModel = viewModel,
                         onDone = { currentScreen = Screen.Home }
                     )
 
-                    Screen.Dashboard -> DashboardScreen(
-                        viewModel = viewModel,
-                        onGoToPreviousRacks = { currentScreen = Screen.Home },
-                        onGoToExpensePage = { currentScreen = Screen.Expense }
-                    )
-
-                    Screen.Heatmap -> HeatmapScreen()
+                    Screen.Vehicle -> VehicleScreen(viewModel = viewModel)
 
                     Screen.Expense -> ExpenseScreen(viewModel = viewModel)
+
+                    Screen.AddGig -> AddGigScreen(
+                        viewModel = viewModel,
+                        onDone = { currentScreen = Screen.Home }
+                    )
                 }
             }
 
             // Bottom Navigation
-            if (currentScreen != Screen.AddGig) {
-                SteampunkBottomNav(
-                    current = currentScreen.name,
-                    onSelect = { selected ->
-                        currentScreen = Screen.valueOf(selected)
-                    }
-                )
-            }
+            SteampunkBottomNav(
+                current = currentScreen.name,
+                onSelect = { selected ->
+                    currentScreen = Screen.valueOf(selected)
+                }
+            )
         }
     }
 }
@@ -112,7 +109,7 @@ fun TrackingRacksApp(viewModel: GigViewModel) {
 enum class Screen {
     Home,
     AddGig,
-    Dashboard,
-    Heatmap,
+    Income,
+    Vehicle,
     Expense
 }

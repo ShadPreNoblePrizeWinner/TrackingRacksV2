@@ -16,5 +16,6 @@ data class DailyExpense(
     val name: String,
     val amount: Double,
     val date: String,
-    val category: String
+    val category: String,
+    val establishment: String = ""
 )

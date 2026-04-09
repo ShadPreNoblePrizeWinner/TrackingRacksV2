@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.finistro.trackingracks"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.finistro.trackingracks"
@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.serialization.json)
